@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #efefef;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      width: 340px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
+    .display {
+      width: 100%;
+      height: 50px;
+      font-size: 28px;
+      text-align: right;
+      padding: 8px 12px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      background-color: #fafafa;
+      box-sizing: border-box;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .button {
+      height: 50px;
+      font-size: 18px;
+      background-color: #f7f7f7;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .button:hover {
+      background-color: #e2e2e2;
+    }
+
+    .operator {
+      background-color: #61a5c2;
+      color: white;
+    }
+
+    .operator:hover {
+      background-color: #4d91ae;
+    }
+
+    .clear {
+      background-color: #e76f51;
+      color: white;
+    }
+
+    .clear:hover {
+      background-color: #d65b3d;
+    }
+
+    .equal {
+      background-color: #2a9d8f;
+      color: white;
+      grid-row: span 2;
+    }
+
+    .equal:hover {
+      background-color: #23877a;
+    }
+
+    .zero {
+      grid-column: span 2;
+    }
+
+    .error {
+      color: crimson;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Kalkulator</h1>
+    <input type="text" id="display" class="display" placeholder="Masukkan angka" disabled />
+
+    <div class="buttons">
+      <button class="button clear" onclick="clearDisplay()">C</button>
+      <button class="button" onclick="backspace()">←</button>
+      <button class="button operator" onclick="appendToDisplay('/')">÷</button>
+      <button class="button operator" onclick="appendToDisplay('*')">×</button>
+
+      <button class="button" onclick="appendToDisplay('7')">7</button>
+      <button class="button" onclick="appendToDisplay('8')">8</button>
+      <button class="button" onclick="appendToDisplay('9')">9</button>
+      <button class="button operator" onclick="appendToDisplay('-')">−</button>
+
+      <button class="button" onclick="appendToDisplay('4')">4</button>
+      <button class="button" onclick="appendToDisplay('5')">5</button>
+      <button class="button" onclick="appendToDisplay('6')">6</button>
+      <button class="button operator" onclick="appendToDisplay('+')">+</button>
+
+      <button class="button" onclick="appendToDisplay('1')">1</button>
+      <button class="button" onclick="appendToDisplay('2')">2</button>
+      <button class="button" onclick="appendToDisplay('3')">3</button>
+      <button class="button equal" onclick="calculate()">=</button>
+
+      <button class="button zero" onclick="appendToDisplay('0')">0</button>
+      <button class="button" onclick="appendToDisplay('.')">.</button>
+    </div>
+
+    <div class="error">
+      <p id="error-message"></p>
+    </div>
+  </div>
+
+  <script>
+    function clearDisplay() {
+      document.getElementById('display').value = '';
+      document.getElementById('error-message').textContent = '';
+    }
+
+    function backspace() {
+      const display = document.getElementById('display');
+      display.value = display.value.slice(0, -1);
+    }
+
+    function appendToDisplay(value) {
+      const display = document.getElementById('display');
+      display.value += value;
+    }
+
+    function calculate() {
+      const display = document.getElementById('display');
+      const errorMessage = document.getElementById('error-message');
+      const input = display.value;
+
+      let operator = null;
+      if (input.includes('+')) operator = '+';
+      else if (input.includes('-')) operator = '-';
+      else if (input.includes('*')) operator = '*';
+      else if (input.includes('/')) operator = '/';
+
+      if (!operator) {
+        display.value = '';
+        errorMessage.textContent = 'Operasi tidak dikenali.';
+        return;
+      }
+
+      const parts = input.split(operator);
+      if (parts.length !== 2) {
+        display.value = '';
+        errorMessage.textContent = 'Format input salah.';
+        return;
+      }
+
+      const a = parseFloat(parts[0]);
+      const b = parseFloat(parts[1]);
+
+      if (isNaN(a) || isNaN(b)) {
+        display.value = '';
+        errorMessage.textContent = 'Angka tidak valid.';
+        return;
+      }
+
+      let result;
+      if (operator === '+') result = a + b;
+      else if (operator === '-') result = a - b;
+      else if (operator === '*') result = a * b;
+      else if (operator === '/') {
+        if (b === 0) {
+          display.value = '';
+          errorMessage.textContent = 'Tidak bisa bagi 0.';
+          return;
+        }
+        result = a / b;
+      }
+
+      display.value = result;
+      errorMessage.textContent = '';
+    }
+  </script>
+</body>
+</html>
